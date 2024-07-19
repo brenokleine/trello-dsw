@@ -1,5 +1,5 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" width="64" viewBox="0 0 73.323 64" height="64">
+    <svg xmlns="http://www.w3.org/2000/svg" width="svgSize.width" height="svgSize.height" viewBox="0 0 73.323 64">
         <defs>
             <linearGradient id="A" x1="31.52" y1="64.56" x2="31.52" y2="1.51" gradientUnits="userSpaceOnUse">
                 <stop offset=".18" stop-color="#0052cc" />
@@ -11,3 +11,26 @@
             fill="url(#A)" fill-rule="evenodd" transform="matrix(1.163111 0 0 1.163111 .023263 -6.417545)" />
     </svg>
 </template>
+
+<script>
+import { computed, defineProps } from 'vue';
+
+const props = defineProps({
+    width: {
+        type: Number,
+        default: 64
+    },
+    height: {
+        type: Number,
+        default: 64
+    }
+});
+
+const svgSize = computed(() => {
+    return {
+        width: `${props.width}`,
+        height: `${props.height}`
+    }
+});
+
+</script>
