@@ -1,0 +1,1 @@
+talvez usar metadados de usuario para handle a questão de permissões
