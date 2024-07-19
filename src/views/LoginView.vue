@@ -1,25 +1,34 @@
 <template>
     <div class="w-full h-full flex justify-center items-center bg-primary">
-        <div class="border border-solid border-4 rounded-lg border-tertiary bg-quaternary font-sans text-xl p-12 pt-0">
-            <div class="w-full flex justify-center items-center p-8 text-3xl font-bold">
-                <h1>
-                    Login
-                </h1>
+        <div class="border border-solid border-4 rounded-lg border-tertiary bg-quaternary font-sans text-xl p-3">
+            <RouterLink
+                to="/"
+                class="font-bold text-md text-tertiary hover:bg-tertiary hover:text-customWhite rounded-full p-2
+                transition ease-out duration-100 hover:cursor-pointer"
+            >
+                Back
+            </RouterLink>
+            
+            <div class="p-16 pt-0">
+                <div class="w-full flex justify-center items-center p-8 text-3xl font-bold">
+                    <h1>
+                        Login
+                    </h1>
+                </div>
+                <form @submit.prevent="handleLogin" class="flex gap-3 flex-col">
+                    <div class="flex gap-8 justify-between items-center">
+                        <label for="email" class="font-semibold">Email</label>
+                        <input type="email" id="email" class="border-2 font-mono border-tertiary rounded-full p-2 bg-customWhite" v-model="email" required />
+                    </div>
+                    <div class="flex gap-8 justify-between items-center">
+                        <label for="password" class="font-semibold">Password</label>
+                        <input type="password" id="password" class="border-2 font-mono border-tertiary rounded-full p-2 bg-customWhite" v-model="password" required />
+                    </div>
+                    <div class="w-full flex font-semibold justify-center bg-primary text-customWhite rounded-full p-2 mt-8 hover:cursor-pointer hover:bg-tertiary">
+                        <button type="submit">Login</button>
+                    </div>
+                </form>
             </div>
-
-            <form @submit.prevent="handleLogin" class="flex gap-3 flex-col">
-                <div class="flex gap-8 justify-between items-center">
-                    <label for="email" class="font-semibold">Email</label>
-                    <input type="email" id="email" class="border-2 font-mono border-tertiary rounded-full p-2 bg-customWhite" v-model="email" required />
-                </div>
-                <div class="flex gap-8 justify-between items-center">
-                    <label for="password" class="font-semibold">Password</label>
-                    <input type="password" id="password" class="border-2 font-mono border-tertiary rounded-full p-2 bg-customWhite" v-model="password" required />
-                </div>
-                <div class="w-full flex font-semibold justify-center bg-primary text-customWhite rounded-full p-2 mt-8 hover:cursor-pointer hover:bg-tertiary">
-                    <button type="submit">Login</button>
-                </div>
-            </form>
             
         </div>
     </div>
