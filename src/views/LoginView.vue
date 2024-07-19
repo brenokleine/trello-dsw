@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full flex justify-center items-center bg-primary">
+    <div class="flex justify-center items-center bg-primary">
         <div class="border border-solid border-4 rounded-lg border-tertiary bg-quaternary font-sans text-xl p-3">
             <RouterLink to="/" class="font-bold text-md text-tertiary hover:bg-tertiary hover:text-customWhite rounded-full p-2
                 transition ease-out duration-100 hover:cursor-pointer">

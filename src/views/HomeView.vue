@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full bg-primary text-customWhite flex justify-center items-center">
+    <div class="bg-primary text-customWhite flex justify-center items-center">
         <div class="font-semibold text-3xl flex flex-col items-center gap-8">
             <div class="bg-customWhite rounded-full p-6">
                 <LogoComponent 
