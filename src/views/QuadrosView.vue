@@ -43,9 +43,16 @@
                     </div>
                     <div class="flex justify-end">
                         <button type="button" @click="closeModal"
-                            class="mr-4 bg-red-700 hover:bg-red-600 text-white transition ease-linear duration-100 py-2 px-4 rounded-lg">Cancel</button>
+                            class="mr-4 bg-red-700 hover:bg-red-600 text-white transition ease-linear duration-100 py-2 px-4 rounded-lg"
+                        >
+                            Cancel
+                        </button>
                         <button type="submit"
-                            class="bg-tertiary hover:bg-secondary transition ease-linear duration-100 text-white py-2 px-4 rounded-lg">Add</button>
+                            class="bg-tertiary hover:bg-secondary transition ease-linear duration-100 text-white py-2 px-4 rounded-lg disabled:opacity-50"
+                            :disabled="form.title.length === 0 || form.description.length === 0"
+                        >
+                            Add
+                        </button>
                     </div>
                 </form>
             </div>
