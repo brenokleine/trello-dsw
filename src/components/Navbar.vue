@@ -18,6 +18,9 @@
 <script setup>
 import LogoComponent from '@/components/LogoComponent.vue';
 import { supabase } from '@/clients/supabase.js';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 async function logout() {
     const { error } = await supabase.auth.signOut();
@@ -27,6 +30,8 @@ async function logout() {
     } else {
         console.log('Logged out');
     }
+
+    router.push('/login');
 }
 
 </script>

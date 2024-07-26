@@ -54,9 +54,12 @@
 <script setup>
 import { ref } from 'vue';
 import { supabase } from '@/clients/supabase.js';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
+
+const router = useRouter();
 
 async function createAccount(){
     const { data, error } = await supabase.auth.signUp({
@@ -82,6 +85,8 @@ async function login() {
     } else {
         console.log(data);
     }
+
+    router.push('/quadros');
 }
 
 async function seeCurrentUser() {
