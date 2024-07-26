@@ -27,36 +27,36 @@
         <div class="flex-grow bg-secondary"></div>
 
         <!-- Modal -->
-        <div v-if="isModalOpen" @click.prevent="backgroundClick" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div v-if="isModalOpen" @click.prevent="backgroundClick"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-customWhite p-8 rounded-lg shadow-lg w-1/3">
                 <h2 class="text-xl font-bold mb-4">Add New Board</h2>
-                <form @submit.prevent="submitForm">
+                <div>
                     <div class="mb-4">
                         <label for="title" class="block text-sm font-medium text-secondary">Title</label>
                         <input type="text" id="title" v-model="form.title" class="mt-1 p-2 w-full border rounded-lg"
                             required>
                     </div>
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-secondary">Description</label>
-                        <textarea id="description" v-model="form.description" class="mt-1 p-2 w-full border rounded-lg"
-                            required></textarea>
-                    </div>
+                    <!-- color picker aqui -->
+
+
+                    <!-- fim color picker -->
                     <div class="flex justify-end">
                         <button type="button" @click="closeModal"
-                            class="mr-4 bg-red-700 hover:bg-red-600 text-white transition ease-linear duration-100 py-2 px-4 rounded-lg"
-                        >
+                            class="mr-4 bg-red-700 hover:bg-red-600 text-white transition ease-linear duration-100 py-2 px-4 rounded-lg">
                             Cancel
                         </button>
                         <button type="submit"
                             class="bg-tertiary hover:bg-secondary transition ease-linear duration-100 text-white py-2 px-4 rounded-lg disabled:opacity-50"
-                            :disabled="form.title.length === 0 || form.description.length === 0"
-                        >
+                            :disabled="form.title.length === 0"
+                            @click.prevent="submitForm">
                             Add
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
+        <!-- end modal -->
     </div>
 </template>
 
@@ -64,12 +64,15 @@
 <script setup>
 import { ref } from 'vue';
 import { supabase } from '@/clients/supabase.js';
+import { ChromePicker } from 'vue-color';
 
 const isModalOpen = ref(false);
 
 const form = ref({
     title: '',
-    description: ''
+    //cores hardcoded enquanto nao tem color picker
+    backgroundColor: '#072242',
+    textColor: '#ffffff',
 });
 
 const openModal = () => {
@@ -79,7 +82,7 @@ const openModal = () => {
 const closeModal = () => {
     isModalOpen.value = false;
     form.value.title = '';
-    form.value.description = '';
+
 };
 
 const backgroundClick = (event) => {
@@ -89,22 +92,16 @@ const backgroundClick = (event) => {
 };
 
 const submitForm = () => {
-    // Here you can handle the form submission, e.g., save the data to Supabase
     console.log('Form submitted:', form.value);
-    addQuadro(form.value.title, form.value.description);
+    addQuadro({ form: form.value });
     closeModal();
 };
 
-const addQuadro = (title, description) => {
-    console.log('Add quadro:', title, description);
-    // Add your Supabase logic here to insert a new quadro
-    // supabase.from('quadros').insert([{ title, description }])
-    //     .then(response => {
-    //         console.log('Quadro added:', response);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error adding quadro:', error);
-    //     });
+const addQuadro = ({ form }) => {
+    
+    // Add your Supabase logic here to insert a new quadro, related to the user thats logged in
+    
+    
 };
 </script>
 
