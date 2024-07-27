@@ -24,8 +24,8 @@
             </div>
         </div>
         <!-- quadros content -->
-        <div class="bg-secondary">
-            <div class="flex h-full flex-nowrap ">
+        <div class="bg-secondary flex-1 overflow-x-auto">
+            <div class="flex h-full flex-nowrap">
                 <Quadro v-for="quadro in quadros" :key="quadro.id" :title="quadro.title"
                     :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" />
             </div>

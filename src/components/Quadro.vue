@@ -1,5 +1,6 @@
 <template>
-    <div class="w-96 m-4 rounded-lg shadow-md" :style="{ backgroundColor: backgroundColor, color: textColor }">
+    <div class="w-96 m-3 flex-shrink-0 rounded-lg shadow-md"
+        :style="{ backgroundColor: backgroundColor, color: textColor }">
         <div class="text-2xl font-semibold border-b-2 p-4" :style="{borderColor: textColor}">
             {{ title }}
         </div>
