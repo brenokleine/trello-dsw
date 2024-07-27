@@ -24,7 +24,12 @@
             </div>
         </div>
         <!-- quadros content -->
-        <div class="flex-grow bg-secondary"></div>
+        <div class="bg-secondary">
+            <div class="flex h-full flex-nowrap ">
+                <Quadro v-for="quadro in quadros" :key="quadro.id" :title="quadro.title"
+                    :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" />
+            </div>
+        </div>
 
         <!-- Modal -->
         <div v-if="isModalOpen" @click.prevent="backgroundClick"
@@ -48,8 +53,7 @@
                         </button>
                         <button type="submit"
                             class="bg-tertiary hover:bg-secondary transition ease-linear duration-100 text-white py-2 px-4 rounded-lg disabled:opacity-50"
-                            :disabled="form.title.length === 0"
-                            @click.prevent="submitForm">
+                            :disabled="form.title.length === 0" @click.prevent="submitForm">
                             Add
                         </button>
                     </div>
@@ -62,18 +66,21 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { supabase } from '@/clients/supabase.js';
-import { ChromePicker } from 'vue-color';
+//import { ChromePicker } from 'vue-color';
+import Quadro from '@/components/Quadro.vue';
 
 const isModalOpen = ref(false);
 
 const form = ref({
     title: '',
     //cores hardcoded enquanto nao tem color picker
-    backgroundColor: '#072242',
-    textColor: '#ffffff',
+    backgroundColor: '#03fcdb',
+    textColor: '#000000',
 });
+
+const quadros = ref([]);
 
 const openModal = () => {
     isModalOpen.value = true;
@@ -91,17 +98,50 @@ const backgroundClick = (event) => {
     }
 };
 
-const submitForm = () => {
+const submitForm = async () => {
     console.log('Form submitted:', form.value);
-    addQuadro({ form: form.value });
+    await addQuadro({ form: form.value });
     closeModal();
 };
 
-const addQuadro = ({ form }) => {
+const addQuadro = async ({ form }) => {
+
+    //get current user logged in
+    const { data: userData } = await supabase.auth.getUser();
     
-    // Add your Supabase logic here to insert a new quadro, related to the user thats logged in
-    
+    try {
+        const { data, error } = await supabase
+            .from('quadros')
+            .insert([
+                {
+                    title: form.title,
+                    bg_color: form.backgroundColor,
+                    text_color: form.textColor,
+                    creator_id: userData.user.id
+                }
+            ]);
+        if (error) throw error;
+        console.log('Quadro added successfully:', data);
+    } catch (error) {
+        console.error('Error adding quadro:', error.message);
+    }
     
 };
+
+const fetchQuadros = async () => {
+    const { data, error } = await supabase
+        .from('quadros')
+        .select('*');
+    if (error) {
+        console.error('Error fetching quadros:', error.message);
+    } else {
+        console.log('Quadros fetched successfully:', data);
+        quadros.value = data;
+    }
+};
+
+onMounted(() => {
+    fetchQuadros();
+});
 </script>
 
