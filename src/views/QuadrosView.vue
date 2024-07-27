@@ -125,6 +125,7 @@ const fetchQuadros = async () => {
     const { data, error } = await supabase
         .from('quadros')
         .select('*');
+        // IMPLEMENTAR SELEÇÃO DE QUADROS DO USUARIO LOGADO
     if (error) {
         console.error('Error fetching quadros:', error.message);
     } else {
