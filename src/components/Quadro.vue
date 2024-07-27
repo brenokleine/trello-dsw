@@ -1,12 +1,19 @@
 <template>
-    <router-link :to="{ name: 'quadroDetail', params: { id: props.id } }" class="w-64 h-48 m-3 rounded-lg shadow-md flex flex-col hover:cursor-pointer" :style="{ backgroundColor: backgroundColor, color: textColor }">
-        <div class="text-2xl font-semibold border-b-2 p-4" :style="{borderColor: textColor}">
-            {{ title }}
-        </div>
-        <div class="w-full h-full flex justify-center items-center font-semibold">
-            Lists: {{ lists }}
-        </div>
-    </router-link>
+    <div class="w-64 h-48 m-3 rounded-lg shadow-md" :style="{ backgroundColor: backgroundColor, color: textColor }">
+        <router-link :to="{ name: 'quadroDetail', params: { id: props.id } }"
+            class="flex flex-col h-5/6 hover:cursor-pointer">
+            <div class="text-2xl font-semibold border-b-2 p-4" :style="{borderColor: textColor}">
+                {{ title }}
+            </div>
+            <div class="w-full h-full flex justify-center items-center font-semibold">
+                Lists: {{ lists }}
+            </div>
+        </router-link>
+        <button @click.prevent="deleteBoard" 
+        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-b-lg border border-white">
+            Delete
+        </button>
+    </div>
 </template>
 
 <script setup>
@@ -44,6 +51,18 @@ const fetchLists = async () => {
         console.error('Error fetching lists:', error.message);
     } else {
         lists.value = data.length;
+    }
+};
+
+const deleteBoard = async () => {
+    const { error } = await supabase
+        .from('quadros')
+        .delete()
+        .eq('id', props.id);
+    if (error) {
+        console.error('Error deleting board:', error.message);
+    } else {
+        console.log('Board deleted successfully');
     }
 };
 
