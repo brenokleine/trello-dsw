@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import QuadrosView from '@/views/QuadrosView.vue'
 import { supabase } from '@/clients/supabase'
+import QuadroDetailView from '@/views/QuadroDetailView.vue'
 
 let localUser;
 
@@ -25,8 +26,17 @@ const router = createRouter({
       component: QuadrosView,
       meta: {
         requiresAuth: true
+      },
+    },
+    {
+      path: '/quadros/:id',
+      name: 'quadroDetail',
+      component: QuadroDetailView,
+      meta: {
+        requiresAuth: true
       }
     }
+
   ]
 })
 

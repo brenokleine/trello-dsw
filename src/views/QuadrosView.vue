@@ -10,24 +10,24 @@
                     <ul>
                         <li class="mb-4">
                             <button @click.prevent="openModal"
-                                class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
-                                Add New
-                            </button>
-                        </li>
-                        <li>
-                            <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
-                                Delete All
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                            class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+                            Add New
+                        </button>
+                    </li>
+                    <li>
+                        <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+                            Delete All
+                        </button>
+                    </li>
+                </ul>
+            </div>
             </div>
         </div>
         <!-- quadros content -->
-        <div class="bg-secondary flex-1 overflow-x-auto">
-            <div class="flex h-full flex-nowrap">
-                <Quadro v-for="quadro in quadros" :key="quadro.id" :title="quadro.title"
-                    :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" />
+        <div class="bg-secondary w-full ">
+            <div class="flex flex-wrap">
+                <Quadro v-for="quadro in quadros" :id="quadro.id" :title="quadro.title"
+                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" />
             </div>
         </div>
 
@@ -61,6 +61,7 @@
             </div>
         </div>
         <!-- end modal -->
+
     </div>
 </template>
 
