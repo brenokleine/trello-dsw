@@ -1,5 +1,6 @@
 <template>
-    <div class="w-64 h-48 m-3 rounded-lg shadow-md" :style="{ backgroundColor: backgroundColor, color: textColor }">
+    <div class="w-64 h-48 m-3 rounded-lg shadow-md hover:scale-110 duration-75 "
+        :style="{ backgroundColor: backgroundColor, color: textColor }">
         <router-link :to="{ name: 'quadroDetail', params: { id: props.id } }"
             class="flex flex-col h-5/6 hover:cursor-pointer">
             <div class="text-2xl font-semibold border-b-2 p-4" :style="{borderColor: textColor}">
@@ -9,18 +10,21 @@
                 Lists: {{ lists }}
             </div>
         </router-link>
-        <button @click.prevent="deleteBoard" 
-        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-b-lg border border-white">
+        <button @click.prevent="openModal"
+            class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-b-lg border border-white">
             Delete
         </button>
-    </div>
+    </div>  
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, defineEmits } from 'vue';
 import { supabase } from '@/clients/supabase.js';
 
 const lists = ref(0);
+const showModal = ref(false);
+
+const emit = defineEmits(['openModal']);
 
 const props = defineProps({
     title: {
@@ -54,16 +58,8 @@ const fetchLists = async () => {
     }
 };
 
-const deleteBoard = async () => {
-    const { error } = await supabase
-        .from('quadros')
-        .delete()
-        .eq('id', props.id);
-    if (error) {
-        console.error('Error deleting board:', error.message);
-    } else {
-        console.log('Board deleted successfully');
-    }
+const openModal = () => {
+   emit('openModal', props.id);
 };
 
 onMounted(() => {

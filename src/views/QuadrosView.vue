@@ -6,7 +6,7 @@
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
                 <Quadro v-for="quadro in quadros" :id="quadro.id" :title="quadro.title"
-                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" />
+                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openModal="openDeleteModal" />
             </div>
         </div>
 
@@ -41,6 +41,10 @@
         </div>
         <!-- end modal -->
 
+        <!-- Delete Modal -->
+        <DeleteQuadroModal v-if="isDeleteModalOpen" :quadroId="idToDelete" @confirmDelete="deleteBoard" @cancelDelete="closeDeleteModal" />
+        <!-- end delete modal -->
+
     </div>
 </template>
 
@@ -51,8 +55,11 @@ import { supabase } from '@/clients/supabase.js';
 //import { ChromePicker } from 'vue-color';
 import Quadro from '@/components/Quadro.vue';
 import Sidebar from '@/components/Sidebar.vue';
+import DeleteQuadroModal from '@/components/DeleteQuadroModal.vue';
 
 const isModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
+const idToDelete = ref(null);
 
 const form = ref({
     title: '',
@@ -62,6 +69,16 @@ const form = ref({
 });
 
 const quadros = ref([]);
+
+const openDeleteModal = (id) => {
+    idToDelete.value = id;
+    isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = () => {
+    isDeleteModalOpen.value = false;
+    idToDelete.value = null;
+};
 
 const openModal = () => {
     isModalOpen.value = true;
@@ -86,7 +103,6 @@ const submitForm = async () => {
 };
 
 const addQuadro = async ({ form }) => {
-
     //get current user logged in
     const { data: userData } = await supabase.auth.getUser();
     
@@ -102,11 +118,27 @@ const addQuadro = async ({ form }) => {
                 }
             ]);
         if (error) throw error;
-        console.log('Quadro added successfully:', data);
+        console.log('Quadro added successfully');
     } catch (error) {
         console.error('Error adding quadro:', error.message);
     }
-    
+
+    fetchQuadros();
+};
+
+const deleteBoard = async (id) => {
+    const { error } = await supabase
+        .from('quadros')
+        .delete()
+        .eq('id', id);
+    if (error) {
+        console.error('Error deleting board:', error.message);
+    } else {
+        console.log('Board deleted successfully');
+        fetchQuadros();
+    }
+
+    closeDeleteModal();
 };
 
 const deleteAll = async () => {
