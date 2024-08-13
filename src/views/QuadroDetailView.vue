@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-nowrap bg-secondary w-full">
+    <div class="flex flex-nowrap bg-secondary w-full overflow-auto">
         <Sidebar :openModal="openModal" :mode="'List'" />
 
         <!-- content -->
