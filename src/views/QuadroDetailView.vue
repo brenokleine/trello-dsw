@@ -3,12 +3,13 @@
         <Sidebar :openModal="openModal" :mode="'List'" />
 
         <!-- content -->
-        <div class="flex flex-col flex-nowrap w-full">
+        <div class="flex flex-col w-full">
             <div class="p-3 pr-5 border-b border-r rounded-br-xl border-tertiary bg-primary w-fit">
                 <h1 class="text-3xl font-bold text-white">Board: {{ quadroDetails.title }}</h1>
             </div>
-            <div class="w-full h-full flex flex-nowrap gap-4 p-3">
-                <Lista v-for="lista in quadroLists" :title="lista.title" :id="lista.id" />
+            <div class="w-full h-full flex gap-4 p-3">
+                <Lista v-for="lista in quadroLists" :key="lista.id" :title="lista.title" :id="lista.id"
+                    @openEditListModal="openEditListModal" @deleteList="deleteList" />
             </div>
         </div>
 
@@ -39,6 +40,9 @@
             </div>
         </div>
         <!-- end modal -->
+
+        <EditListModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" @cancelEditList="cancelEditList"
+            @confirmEditList="confirmEditList" />
     </div>
 </template>
 
@@ -48,11 +52,16 @@ import { useRoute } from 'vue-router';
 import { supabase } from '@/clients/supabase.js';
 import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
+import EditListModal from '@/components/EditListModal.vue';
 
 const route = useRoute();
 const id = ref(route.params.id);
 
 const isModalOpen = ref(false);
+
+const idToEdit = ref(null);
+const titleToEdit = ref('');
+const isEditModalOpen = ref(false);
 
 const quadroDetails = ref({});
 
@@ -82,7 +91,8 @@ const fetchLists = async () => {
     const { data, error } = await supabase
         .from('listas')
         .select('*')
-        .eq('quadro_id', quadroDetails.value.id);
+        .eq('quadro_id', quadroDetails.value.id)
+        .order('created_at', { ascending: true });
 
     if (error) {
         console.error('Error fetching lists:', error.message);
@@ -128,6 +138,52 @@ const submitForm = async () => {
     form.value.title = '';
     fetchLists();
     closeModal();
+};
+
+const openEditListModal = (id) => {
+    const lista = quadroLists.value.find(l => l.id === id);
+    idToEdit.value = lista.id;
+    titleToEdit.value = lista.title;
+    isEditModalOpen.value = true;
+};
+
+const cancelEditList = () => {
+    isEditModalOpen.value = false;
+    idToEdit.value = null;
+    titleToEdit.value = '';
+};
+
+const confirmEditList = async ({ id, title }) => {
+    try {
+        const { data, error } = await supabase
+            .from('listas')
+            .update({ title })
+            .eq('id', id);
+        if (error) throw error;
+        console.log('List updated successfully');
+        fetchLists();
+    } catch (error) {
+        console.error('Error updating list:', error.message);
+    }
+
+    cancelEditList();
+    await fetchLists();
+};
+
+const deleteList = async (id) => {
+    try {
+        const { data, error } = await supabase
+            .from('listas')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+        console.log('List deleted successfully');
+        fetchLists();
+    } catch (error) {
+        console.error('Error deleting list:', error.message);
+    }
+
+    await fetchLists();
 };
 
 onMounted(async () => {

@@ -12,11 +12,11 @@
         </router-link>
         <div class="flex flex-nowrap">
             <button @click.prevent="openDeleteModal"
-                class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-bl-lg border border-white">
+                class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-bl-lg">
                 Delete
             </button>
             <button @click.prevent="openEditModal"
-                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-br-lg border border-white">
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-br-lg">
                 Edit
             </button>
         </div>

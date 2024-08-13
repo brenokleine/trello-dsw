@@ -1,16 +1,28 @@
 <template>
-    <div class="h-full w-52 bg-quaternary rounded-lg">
+    <div class="h-full w-72 bg-quaternary rounded-lg">
         <div class="w-full h-fit">
-            <p class="text-2xl font-semibold p-2 border-b border-secondary">
-                {{ title }}
-            </p>
+            <div class="flex flex-col">
+                <div class="flex flex-nowrap font-semibold">
+                    <button @click.prevent="openEditListModal"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-tl-md transition ease-in duration-75">
+                        Edit
+                    </button>
+                    <button @click.prevent="deleteList"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white p-1 rounded-tr-md transition ease-in duration-75">
+                        Delete
+                    </button>
+                </div>
+                <p class="text-2xl font-semibold p-2 border-b border-secondary break-words">
+                    {{ title }}
+                </p>
+            </div>
             <div class="flex justify-between p-2">
                 <p class="text-lg font-semibold ">
                     Cards: {{ cards.length }}
                 </p>
 
                 <button class="bg-green-500 hover:bg-green-700 text-sm font-semibold text-white rounded-full p-2"
-                    @click="openModal">
+                    @click="openCardModal">
                     Add
                 </button>
             </div>
@@ -18,21 +30,22 @@
 
         <!-- render cards here -->
         <div class="w-full h-fit p-2 flex flex-col gap-3">
-            <Card v-for="card in cards" :text="card.text" :id="card.id" />
+            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" />
         </div>
 
         <!-- Add Card Modal -->
-        <div v-if="isModalOpen" @click.prevent="backgroundClick"
+        <div v-if="isCardModalOpen" @click.prevent="backgroundClick"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-customWhite p-8 rounded-lg shadow-lg w-1/3">
                 <h2 class="text-xl font-bold mb-4">Add Card</h2>
                 <div>
                     <div class="mb-4">
                         <label for="text" class="block text-sm font-medium text-secondary">Text</label>
-                        <input type="text" id="text" v-model="form.text" class="mt-1 p-2 w-full border rounded-lg" required>
+                        <input type="text" id="text" v-model="form.text" class="mt-1 p-2 w-full border rounded-lg"
+                            required>
                     </div>
                     <div class="flex justify-end">
-                        <button type="button" @click="closeModal"
+                        <button type="button" @click="closeCardModal"
                             class="mr-4 bg-red-700 hover:bg-red-600 text-white transition ease-linear duration-100 py-2 px-4 rounded-lg">
                             Cancel
                         </button>
@@ -46,13 +59,16 @@
             </div>
         </div>
         <!-- end modal -->
+
+        <EditCardModal v-if="isEditCardModalOpen" :id="idToEdit" :text="textToEdit" @cancelEditCard="cancelEditCard" @confirmEditCard="confirmEditCard" />
     </div>
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, defineEmits } from 'vue';
 import { supabase } from '@/clients/supabase.js';
 import Card from '@/components/Card.vue';
+import EditCardModal from '@/components/EditCardModal.vue';
 
 const props = defineProps({
     title: {
@@ -65,33 +81,70 @@ const props = defineProps({
     }
 });
 
+const emit = defineEmits(['openEditListModal', 'deleteList']);
+
 const cards = ref([]);
 
-const isModalOpen = ref(false);
+const isCardModalOpen = ref(false);
 
-const openModal = () => {
-    isModalOpen.value = true;
-};
+const isEditCardModalOpen = ref(false);
 
-const closeModal = () => {
-    isModalOpen.value = false;
-};
-
-const backgroundClick = (event) => {
-    if (event.target === event.currentTarget) {
-        closeModal();
-    }
-};
+const idToEdit = ref(null);
+const textToEdit = ref('');
 
 const form = ref({
     text: '',
 });
 
+const openEditCardModal = ({id, text}) => {
+    idToEdit.value = id;
+    textToEdit.value = text;
+    isEditCardModalOpen.value = true;
+};
+
+const cancelEditCard = () => {
+    isEditCardModalOpen.value = false;
+    idToEdit.value = null;
+
+};
+
+const confirmEditCard = async ({ id, text }) => {
+    try {
+        const { data, error } = await supabase
+            .from('cartoes')
+            .update({ text })
+            .eq('id', id);
+        if (error) throw error;
+        console.log('Card updated successfully');
+    } catch (error) {
+        console.error('Error updating card:', error.message);
+    }
+    
+    isEditCardModalOpen.value = false;
+    idToEdit.value = null;
+    fetchCards();
+};
+
+const openCardModal = () => {
+    isCardModalOpen.value = true;
+};
+
+const closeCardModal = () => {
+    isCardModalOpen.value = false;
+};
+
+const backgroundClick = (event) => {
+    if (event.target === event.currentTarget) {
+        closeCardModal();
+    }
+};
+
 const fetchCards = async () => {
     const { data, error } = await supabase
         .from('cartoes')
         .select('*')
-        .eq('lista_id', props.id);
+        .eq('lista_id', props.id)
+        .order('created_at', { ascending: true });
     if (error) {
         console.error('Error fetching cards:', error.message);
     } else {
@@ -117,7 +170,31 @@ const addCard = async () => {
     }
 
     form.value.text = '';
-    closeModal();
+    closeCardModal();
+};
+
+const deleteCard = async (id) => {
+    try {
+        const { error } = await supabase
+            .from('cartoes')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+        console.log('Card deleted successfully');
+        fetchCards();
+    } catch (error) {
+        console.error('Error deleting card:', error.message);
+    }
+
+    await fetchCards();
+};
+
+const openEditListModal = () => {
+    emit('openEditListModal', props.id);
+};
+
+const deleteList = () => {
+    emit('deleteList', props.id);
 };
 
 onMounted(async () => {
