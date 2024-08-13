@@ -1,7 +1,7 @@
 <template>
     <div class="flex">
         <!-- Sidebar -->
-        <Sidebar :openModal="openModal"/>
+        <Sidebar :openModal="openModal" :mode="'Board'" />
         <!-- quadros content -->
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">

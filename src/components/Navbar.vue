@@ -11,7 +11,7 @@
                 class="flex items-center bg-tertiary hover:bg-customWhite hover:text-primary transition ease-in text-white font-semibold p-3 rounded-xl"
             >
                 <p>
-                    Quadros
+                    Boards
                 </p>
             </RouterLink>
         </div>
