@@ -10,11 +10,17 @@
                 Lists: {{ lists }}
             </div>
         </router-link>
-        <button @click.prevent="openModal"
-            class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-b-lg border border-white">
-            Delete
-        </button>
-    </div>  
+        <div class="flex flex-nowrap">
+            <button @click.prevent="openDeleteModal"
+                class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-bl-lg border border-white">
+                Delete
+            </button>
+            <button @click.prevent="openEditModal"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-br-lg border border-white">
+                Edit
+            </button>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -24,7 +30,7 @@ import { supabase } from '@/clients/supabase.js';
 const lists = ref(0);
 const showModal = ref(false);
 
-const emit = defineEmits(['openModal']);
+const emit = defineEmits(['openDeleteModal', 'openEditModal']);
 
 const props = defineProps({
     title: {
@@ -58,8 +64,12 @@ const fetchLists = async () => {
     }
 };
 
-const openModal = () => {
-   emit('openModal', props.id);
+const openDeleteModal = () => {
+   emit('openDeleteModal', props.id);
+};
+
+const openEditModal = () => {
+    emit('openEditModal', props.id);
 };
 
 onMounted(() => {

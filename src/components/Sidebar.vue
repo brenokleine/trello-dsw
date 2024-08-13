@@ -21,7 +21,6 @@ import { defineProps } from 'vue';
 
 const props = defineProps({
     openModal: Function,
-    deleteAll: Function
 });
 
 </script>

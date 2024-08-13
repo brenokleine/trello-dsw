@@ -1,16 +1,16 @@
 <template>
     <div class="flex">
         <!-- Sidebar -->
-        <Sidebar :openModal="openModal" :deleteAll="deleteAll" />
+        <Sidebar :openModal="openModal"/>
         <!-- quadros content -->
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
                 <Quadro v-for="quadro in quadros" :id="quadro.id" :title="quadro.title"
-                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openModal="openDeleteModal" />
+                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openDeleteModal="openDeleteModal" @openEditModal="openEditModal" />
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Add Quadro Modal -->
         <div v-if="isModalOpen" @click.prevent="backgroundClick"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-customWhite p-8 rounded-lg shadow-lg w-1/3">
@@ -45,6 +45,11 @@
         <DeleteQuadroModal v-if="isDeleteModalOpen" :quadroId="idToDelete" @confirmDelete="deleteBoard" @cancelDelete="closeDeleteModal" />
         <!-- end delete modal -->
 
+        <!-- Edit Modal -->
+         <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit" :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
+        <!-- end edit modal -->
+
+
     </div>
 </template>
 
@@ -56,10 +61,20 @@ import { supabase } from '@/clients/supabase.js';
 import Quadro from '@/components/Quadro.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DeleteQuadroModal from '@/components/DeleteQuadroModal.vue';
+import EditQuadroModal from '@/components/EditQuadroModal.vue';
 
 const isModalOpen = ref(false);
+
 const isDeleteModalOpen = ref(false);
 const idToDelete = ref(null);
+
+const isEditModalOpen = ref(false);
+const idToEdit = ref(null);
+const titleToEdit = ref('');
+const bgColorToEdit = ref('');
+const textColorToEdit = ref('');
+
+const currentUser = ref(null);
 
 const form = ref({
     title: '',
@@ -69,6 +84,14 @@ const form = ref({
 });
 
 const quadros = ref([]);
+
+const fetchCurrentUser = async () => {
+    const { data } = await supabase.auth.getUser();
+    
+    currentUser.value = data.user;
+
+    console.log('Current user:', currentUser.value);
+}
 
 const openDeleteModal = (id) => {
     idToDelete.value = id;
@@ -87,7 +110,42 @@ const openModal = () => {
 const closeModal = () => {
     isModalOpen.value = false;
     form.value.title = '';
+};
 
+const openEditModal = (id) => {
+    const quadro = quadros.value.find(q => q.id === id);
+    idToEdit.value = quadro.id;
+    titleToEdit.value = quadro.title;
+    bgColorToEdit.value = quadro.bg_color;
+    textColorToEdit.value = quadro.text_color;
+    isEditModalOpen.value = true;
+};
+
+const cancelEdit = () => {
+    isEditModalOpen.value = false;
+    idToEdit.value = null;
+    titleToEdit.value = '';
+    bgColorToEdit.value = '';
+    textColorToEdit.value = '';
+};
+
+const confirmEdit = async ({ id, title, bg_color, text_color }) => {
+    try {
+        const { data, error } = await supabase
+            .from('quadros')
+            .update({ title, bg_color, text_color })
+            .eq('id', id);
+        if (error) throw error;
+        console.log('Quadro updated successfully');
+        fetchQuadros();
+    } catch (error) {
+        console.error('Error updating quadro:', error.message);
+    }
+
+    cancelEdit();
+    
+    fetchQuadros();
+    return data;
 };
 
 const backgroundClick = (event) => {
@@ -124,6 +182,7 @@ const addQuadro = async ({ form }) => {
     }
 
     fetchQuadros();
+    
 };
 
 const deleteBoard = async (id) => {
@@ -141,32 +200,23 @@ const deleteBoard = async (id) => {
     closeDeleteModal();
 };
 
-const deleteAll = async () => {
-    const { data, error } = await supabase
-        .from('quadros')
-        .delete()
-        .match({});
-    if (error) {
-        console.error('Error deleting quadros:', error.message);
-    } else {
-        console.log('Quadros deleted successfully:', data);
-    }
-};
-
 const fetchQuadros = async () => {
+    if(!currentUser.value) { console.log("porra sem user caralho"); };
+    
     const { data, error } = await supabase
         .from('quadros')
-        .select('*');
-        // IMPLEMENTAR SELEÇÃO DE QUADROS DO USUARIO LOGADO
+        .select('*')
+        .eq('creator_id', currentUser.value.id)
+        .order('id', { ascending: true });
     if (error) {
         console.error('Error fetching quadros:', error.message);
     } else {
-        console.log('Quadros fetched successfully:', data);
         quadros.value = data;
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
+    await fetchCurrentUser();
     fetchQuadros();
 });
 </script>
