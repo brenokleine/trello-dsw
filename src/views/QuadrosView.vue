@@ -41,14 +41,9 @@
         </div>
         <!-- end modal -->
 
-        <!-- Delete Modal -->
         <DeleteQuadroModal v-if="isDeleteModalOpen" :quadroId="idToDelete" @confirmDelete="deleteBoard" @cancelDelete="closeDeleteModal" />
-        <!-- end delete modal -->
 
-        <!-- Edit Modal -->
-         <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit" :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
-        <!-- end edit modal -->
-
+        <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit" :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
 
     </div>
 </template>
@@ -182,7 +177,7 @@ const addQuadro = async ({ form }) => {
     }
 
     fetchQuadros();
-    
+
 };
 
 const deleteBoard = async (id) => {
