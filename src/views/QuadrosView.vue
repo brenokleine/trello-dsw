@@ -6,7 +6,8 @@
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
                 <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :title="quadro.title"
-                :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openDeleteModal="openDeleteModal" @openEditModal="openEditModal" />
+                    :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openDeleteModal="openDeleteModal"
+                    @openEditModal="openEditModal" />
             </div>
         </div>
 
@@ -22,8 +23,10 @@
                             required>
                     </div>
                     <!-- color picker aqui -->
-
-
+                    <div class="flex flex-col mb-3 gap-3">
+                        <DxColorBox v-model="form.backgroundColor" :input-attr="defaultModeLabel" />
+                        <DxColorBox v-model="form.textColor" :input-attr="defaultModeLabel" />
+                    </div>
                     <!-- fim color picker -->
                     <div class="flex justify-end">
                         <button type="button" @click="closeModal"
@@ -41,22 +44,26 @@
         </div>
         <!-- end modal -->
 
-        <DeleteQuadroModal v-if="isDeleteModalOpen" :quadroId="idToDelete" @confirmDelete="deleteBoard" @cancelDelete="closeDeleteModal" />
+        <DeleteQuadroModal v-if="isDeleteModalOpen" :quadroId="idToDelete" @confirmDelete="deleteBoard"
+            @cancelDelete="closeDeleteModal" />
 
-        <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit" :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
+        <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit"
+            :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
 
     </div>
 </template>
 
 
 <script setup>
+
 import { ref, onMounted } from 'vue';
 import { supabase } from '@/clients/supabase.js';
-//import { ChromePicker } from 'vue-color';
 import Quadro from '@/components/Quadro.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DeleteQuadroModal from '@/components/DeleteQuadroModal.vue';
 import EditQuadroModal from '@/components/EditQuadroModal.vue';
+import 'devextreme/dist/css/dx.light.css';
+import DxColorBox from 'devextreme-vue/color-box';
 
 const isModalOpen = ref(false);
 

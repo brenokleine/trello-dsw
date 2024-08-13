@@ -9,8 +9,10 @@
                         required>
                 </div>
                 <!-- color picker aqui -->
-
-
+                <div class="flex flex-col mb-3 gap-3 w-1/3">
+                    <DxColorBox v-model="form.backgroundColor" :input-attr="defaultModeLabel" />
+                    <DxColorBox v-model="form.textColor" :input-attr="defaultModeLabel" />
+                </div>
                 <!-- fim color picker -->
                 <div class="flex justify-end">
                     <button type="button" @click="cancelEdit"
@@ -30,6 +32,7 @@
 
 <script setup>
 import { defineProps, ref, defineEmits } from 'vue';
+import DxColorBox from 'devextreme-vue/color-box';
 
 const emit = defineEmits(['cancelEdit', 'confirmEdit']);
 
