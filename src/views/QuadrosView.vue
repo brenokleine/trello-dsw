@@ -5,7 +5,7 @@
         <!-- quadros content -->
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
-                <Quadro v-for="quadro in quadros" :id="quadro.id" :title="quadro.title"
+                <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :title="quadro.title"
                 :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openDeleteModal="openDeleteModal" @openEditModal="openEditModal" />
             </div>
         </div>
