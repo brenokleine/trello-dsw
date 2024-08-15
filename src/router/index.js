@@ -42,16 +42,11 @@ const router = createRouter({
 
 
 //get user
-async function getUser(next){
-  localUser = await supabase.auth.getSession();
-
-  //se usuario tentar entrar em pagina que precisa de autenticacao e nao estiver logado, redireciona para login
-  if(localUser.data.session == null){
-   next('/login'); 
-  } else {
-    next();
-  }
+async function getUser() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
 }
+
 
 
 //* auth verification -> verifica o auth toda vez q usuario mudar para pagina que precisa de autenticacao e chama o getUser
@@ -59,12 +54,24 @@ async function getUser(next){
 // from -> de onde o usuario esta vindo
 // next -> funcao que chama o proximo middleware
 
-router.beforeEach((to, from, next) => {
-  if(to.meta.requiresAuth){
-    getUser(next);
-  } else {
-    next();
+router.beforeEach(async (to, from, next) => {
+  const session = await getUser();
+
+  // Redirect logged-in users away from login page
+  if (to.path === '/login' && session) {
+    next('/quadros');
+    return;
   }
-})
+
+  // Redirect unauthenticated users trying to access protected routes
+  if (to.meta.requiresAuth && !session) {
+    next('/login');
+    return;
+  }
+
+  // Proceed as usual for other routes
+  next();
+});
+
 
 export default router
