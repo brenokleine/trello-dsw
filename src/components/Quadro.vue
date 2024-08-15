@@ -1,5 +1,5 @@
 <template>
-    <div class="w-64 h-48 m-3 rounded-lg shadow-md hover:scale-110 duration-75 "
+    <div class="w-64 h-48 m-3 rounded-lg shadow-md hover:scale-105 duration-75 "
         :style="{ backgroundColor: backgroundColor, color: textColor }">
         <router-link :to="{ name: 'quadroDetail', params: { id: props.id } }"
             class="flex flex-col h-5/6 hover:cursor-pointer">

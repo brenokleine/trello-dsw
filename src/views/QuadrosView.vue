@@ -203,8 +203,6 @@ const deleteBoard = async (id) => {
 };
 
 const fetchQuadros = async () => {
-    if(!currentUser.value) { console.log("porra sem user caralho"); };
-    
     const { data, error } = await supabase
         .from('quadros')
         .select('*')

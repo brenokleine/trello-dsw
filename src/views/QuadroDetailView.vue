@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-nowrap bg-secondary w-full overflow-auto">
-        <Sidebar :openModal="openModal" :mode="'List'" />
+        <Sidebar :openModal="openModal" @openContributorModal="openContributorModal" :mode="'List'" />
 
         <!-- content -->
         <div class="flex flex-col w-full">
@@ -43,6 +43,9 @@
 
         <EditListModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" @cancelEditList="cancelEditList"
             @confirmEditList="confirmEditList" />
+
+        <AddContributorModal v-if="isContributorModalOpen" @cancelContributorAdd="cancelContributorAdd"
+            @confirmContributorAdd="confirmContributorAdd" />
     </div>
 </template>
 
@@ -53,11 +56,14 @@ import { supabase } from '@/clients/supabase.js';
 import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 import EditListModal from '@/components/EditListModal.vue';
+import AddContributorModal from '@/components/AddContributorModal.vue';
 
 const route = useRoute();
 const id = ref(route.params.id);
 
 const isModalOpen = ref(false);
+
+const isContributorModalOpen = ref(false);
 
 const idToEdit = ref(null);
 const titleToEdit = ref('');
@@ -185,6 +191,49 @@ const deleteList = async (id) => {
 
     await fetchLists();
 };
+
+const openContributorModal = () => {
+    isContributorModalOpen.value = true;
+};
+
+const cancelContributorAdd = () => {
+    isContributorModalOpen.value = false;
+};
+
+const confirmContributorAdd = async ( {email, permission} ) => {
+    
+    const contributor = {
+        email: email,
+        permission: permission
+    }
+
+    const currentUserEmail = (await supabase.auth.getUser()).data.user.email;
+
+    if(currentUserEmail === contributor.email){
+        window.alert('You cannot add yourself as a contributor');
+        return;
+    }
+    
+    const permitted_users = quadroDetails.value.permitted_users || [];
+
+    const updated_permitted_users = [...permitted_users, contributor];
+
+    try {
+        const { data, error } = await supabase
+            .from('quadros')
+            .update({ permitted_users: updated_permitted_users })
+            .eq('id', quadroDetails.value.id);
+        if (error) throw error;
+        console.log('Contributor added successfully');
+    } catch (error) {
+        console.error('Error adding contributor:', error.message);
+    }
+
+    isContributorModalOpen.value = false;
+    await fetchDetails();
+    await fetchLists();
+};
+
 
 onMounted(async () => {
     await fetchDetails();
