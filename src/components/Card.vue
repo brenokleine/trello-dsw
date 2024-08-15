@@ -12,8 +12,28 @@
                 </button>
             </div>
         </div>
-        <div class="p-3 font-semibold break-words">
-            {{ text }}
+        <div class="flex flex-col">
+            <div
+                class="text-white text-xs italic font-medium flex flex-nowrap justify-between p-2 border-b border-secondary">
+                <p>
+                    Created At:
+                </p>
+                <p>
+                    {{ new Date(created_at).toLocaleString() }}
+                </p>
+            </div>
+            <div v-if="ultima_alteracao"
+                class="text-white text-xs italic font-medium flex flex-nowrap justify-between p-2 border-b border-secondary">
+                <p>
+                    Last Edited:
+                </p>
+                <p>
+                    {{ new Date(ultima_alteracao).toLocaleString() }}
+                </p>
+            </div>
+            <p class="p-3 font-semibold break-words">
+                {{ text }}
+            </p>
         </div>
     </div>
 </template>
@@ -27,6 +47,14 @@ const props = defineProps({
         required: true
     },
     id: {
+        type: String,
+        required: true
+    },
+    ultima_alteracao: {
+        type: String,
+        required: false
+    },
+    created_at: {
         type: String,
         required: true
     }

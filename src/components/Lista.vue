@@ -30,7 +30,7 @@
 
         <!-- render cards here -->
         <div class="w-full h-fit p-2 flex flex-col gap-3">
-            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" />
+            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" :ultima_alteracao="card.ultima_alteracao" :created_at="card.created_at" @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" />
         </div>
 
         <!-- Add Card Modal -->
@@ -112,7 +112,7 @@ const confirmEditCard = async ({ id, text }) => {
     try {
         const { data, error } = await supabase
             .from('cartoes')
-            .update({ text })
+            .update({ text, ultima_alteracao: new Date() })
             .eq('id', id);
         if (error) throw error;
         console.log('Card updated successfully');
