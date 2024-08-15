@@ -16,6 +16,32 @@
                         class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg">
                         Add Contributor
                     </button>
+                    <div v-if="contributors.length > 0" class="flex flex-col pt-4">
+                        <p class="text-lg font-semibold">
+                            Contributors: {{ contributors.length }}
+                        </p>
+                        <div class="flex flex-col gap-1 pt-2 font-semibold">
+                            <p class="text-lg">
+                                Edit:
+                            </p>
+                            <div v-for="contributor in contributors" :key="contributor.email">
+                                <p v-if="contributor.permission == 'edit'" class="italic font-normal text-white">
+                                    {{ contributor.email }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1 pt-2 font-semibold">
+                            <p class="text-lg">
+                                Read:
+                            </p>
+                            <div v-for="contributor in contributors" :key="contributor.email">
+                                <p v-if="contributor.permission == 'read'" class="italic font-normal text-white">
+                                    {{ contributor.email }}
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -38,6 +64,10 @@ const props = defineProps({
     mode: {
         type: String,
         required: true,
+    },
+    contributors: {
+        type: Array,
+        required: false,
     },
 });
 

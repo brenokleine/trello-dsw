@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-nowrap bg-secondary w-full overflow-auto">
-        <Sidebar :openModal="openModal" @openContributorModal="openContributorModal" :mode="'List'" />
+        <Sidebar :openModal="openModal" @openContributorModal="openContributorModal" :contributors="contributorsArray" :mode="'List'" />
 
         <!-- content -->
         <div class="flex flex-col w-full">
@@ -77,6 +77,8 @@ const form = ref({
     title: '',
 });
 
+const contributorsArray = ref([]);
+
 const fetchDetails = async () => {
     const { data, error } = await supabase
         .from('quadros')
@@ -90,6 +92,7 @@ const fetchDetails = async () => {
         console.log('Quadro details:', data[0]);
     }
 
+    contributorsArray.value = data[0].permitted_users || [];
     quadroDetails.value = data[0];
 };
 
@@ -215,6 +218,11 @@ const confirmContributorAdd = async ( {email, permission} ) => {
     }
     
     const permitted_users = quadroDetails.value.permitted_users || [];
+
+    if(permitted_users.some(user => user.email === contributor.email)){
+        window.alert('User already in the list');
+        return;
+    }
 
     const updated_permitted_users = [...permitted_users, contributor];
 
