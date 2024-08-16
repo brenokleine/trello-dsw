@@ -9,7 +9,8 @@
             </div>
             <div class="w-full h-full flex gap-4 p-3">
                 <Lista v-for="lista in quadroLists" :key="lista.id" :title="lista.title" :id="lista.id"
-                    @openEditListModal="openEditListModal" @deleteList="deleteList" @pushListLeft="pushListLeft" @pushListRight="pushListRight" />
+                    @openEditListModal="openEditListModal" @deleteList="deleteList" @pushListLeft="pushListLeft" @pushListRight="pushListRight"
+                    @pushCardLeft="pushCardLeft" @pushCardRight="pushCardRight"/>
             </div>
         </div>
 
@@ -57,6 +58,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 import EditListModal from '@/components/EditListModal.vue';
 import AddContributorModal from '@/components/AddContributorModal.vue';
+import { getCurrentInstance } from 'vue';
 
 const route = useRoute();
 const id = ref(route.params.id);
@@ -247,6 +249,49 @@ const updateListOrder = async (list1, list2) => {
         console.log('List order updated successfully');
     } catch (error) {
         console.error('Error updating list order:', error.message);
+    }
+};
+
+const pushCardLeft = (card) => {
+    const list = quadroLists.value.find(l => l.id === card.lista_id);
+    const index = quadroLists.value.indexOf(list);
+
+    if (index === 0) {
+        return;
+    }
+
+    const previousList = quadroLists.value[index - 1];
+
+    card.lista_id = previousList.id;
+
+    updateCardList(card);
+};
+
+const pushCardRight = (card) => {
+    const list = quadroLists.value.find(l => l.id === card.lista_id);
+    const index = quadroLists.value.indexOf(list);
+
+    if (index === quadroLists.value.length - 1) {
+        return;
+    }
+
+    const nextList = quadroLists.value[index + 1];
+
+    card.lista_id = nextList.id;
+
+    updateCardList(card);
+};
+
+const updateCardList = async (card) => {
+    try {
+        const { error } = await supabase
+            .from('cartoes')
+            .update({ lista_id: card.lista_id })
+            .eq('id', card.id);
+        if (error) throw error;
+        console.log('Card list updated successfully');
+    } catch (error) {
+        console.error('Error updating card list:', error.message);
     }
 };
 

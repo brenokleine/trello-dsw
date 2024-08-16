@@ -39,7 +39,8 @@
 
         <!-- render cards here -->
         <div class="w-full h-fit p-2 flex flex-col gap-3">
-            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" :ultima_alteracao="card.ultima_alteracao" :created_at="card.created_at" @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" />
+            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" :ultima_alteracao="card.ultima_alteracao" :created_at="card.created_at"
+                @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" @pushCardLeft="pushCardLeft" @pushCardRight="pushCardRight" />
         </div>
 
         <!-- Add Card Modal -->
@@ -212,6 +213,16 @@ const pushListLeft = () => {
 
 const pushListRight = () => {
     emit('pushListRight', props.id);
+};
+
+const pushCardLeft = (id) => {
+    const card = cards.value.find(c => c.id === id);
+    emit('pushCardLeft', card);
+};
+
+const pushCardRight = (id) => {
+    const card = cards.value.find(c => c.id === id);
+    emit('pushCardRight', card);
 };
 
 onMounted(async () => {

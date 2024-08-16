@@ -11,6 +11,14 @@
                     Delete
                 </button>
             </div>
+            <div class="flex flex-nowrap font-semibold">
+                <svg @click="pushCardLeft" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 justify-start w-full hover:bg-violet-700 cursor-pointer">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                <svg @click="pushCardRight" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 justify-end w-full hover:bg-violet-700 cursor-pointer">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </div>
         </div>
         <div class="flex flex-col">
             <div
@@ -71,6 +79,14 @@ const openEditCardModal = () => {
 
 const deleteCard = () => {
     emit('deleteCard', props.id);
+};
+
+const pushCardLeft = () => {
+    emit('pushCardLeft', props.id);
+};
+
+const pushCardRight = () => {
+    emit('pushCardRight', props.id);
 };
 
 </script>
