@@ -9,7 +9,7 @@
             </div>
             <div class="w-full h-full flex gap-4 p-3">
                 <Lista v-for="lista in quadroLists" :key="lista.id" :title="lista.title" :id="lista.id"
-                    @openEditListModal="openEditListModal" @deleteList="deleteList" />
+                    @openEditListModal="openEditListModal" @deleteList="deleteList" @pushListLeft="pushListLeft" @pushListRight="pushListRight" />
             </div>
         </div>
 
@@ -143,7 +143,7 @@ const submitForm = async () => {
     } else {
         console.log('New list inserted:', data);
     }
-    
+
     form.value.title = '';
     fetchLists();
     closeModal();
@@ -195,6 +195,61 @@ const deleteList = async (id) => {
     await fetchLists();
 };
 
+const pushListLeft = (id) => {
+    const list = quadroLists.value.find(l => l.id === id);
+    const index = quadroLists.value.indexOf(list);
+
+    if (index === 0) {
+        return;
+    }
+
+    const previousList = quadroLists.value[index - 1];
+
+    const temp = list.created_at;
+    list.created_at = previousList.created_at;
+    previousList.created_at = temp;
+
+    quadroLists.value[index] = previousList;
+    quadroLists.value[index - 1] = list;
+
+    updateListOrder(list, previousList);
+};
+
+const pushListRight = (id) => {
+    const list = quadroLists.value.find(l => l.id === id);
+    const index = quadroLists.value.indexOf(list);
+
+    if (index === quadroLists.value.length - 1) {
+        return;
+    }
+
+    const nextList = quadroLists.value[index + 1];
+
+    const temp = list.created_at;
+    list.created_at = nextList.created_at;
+    nextList.created_at = temp;
+
+    quadroLists.value[index] = nextList;
+    quadroLists.value[index + 1] = list;
+
+    updateListOrder(list, nextList);
+};
+
+const updateListOrder = async (list1, list2) => {
+    try {
+        const { data, error } = await supabase
+            .from('listas')
+            .update([
+                { created_at: list1.created_at },
+                { created_at: list2.created_at },
+            ]);
+        if (error) throw error;
+        console.log('List order updated successfully');
+    } catch (error) {
+        console.error('Error updating list order:', error.message);
+    }
+};
+
 const openContributorModal = () => {
     isContributorModalOpen.value = true;
 };
@@ -204,7 +259,7 @@ const cancelContributorAdd = () => {
 };
 
 const confirmContributorAdd = async ( {email, permission} ) => {
-    
+
     const contributor = {
         email: email,
         permission: permission
@@ -216,7 +271,7 @@ const confirmContributorAdd = async ( {email, permission} ) => {
         window.alert('You cannot add yourself as a contributor');
         return;
     }
-    
+
     const permitted_users = quadroDetails.value.permitted_users || [];
 
     if(permitted_users.some(user => user.email === contributor.email)){

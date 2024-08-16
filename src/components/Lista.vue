@@ -12,9 +12,18 @@
                         Delete
                     </button>
                 </div>
+                <div class="flex flex-nowrap font-semibold">
+                    <svg @click.prevent="pushListLeft" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 justify-start w-full hover:bg-gray-500 cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                    </svg>
+                    <svg @click.prevent="pushListRight" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 justify-end w-full hover:bg-gray-500 cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                </div>
                 <p class="text-2xl font-semibold p-2 border-b border-secondary break-words">
                     {{ title }}
                 </p>
+
             </div>
             <div class="flex justify-between p-2">
                 <p class="text-lg font-semibold ">
@@ -119,7 +128,7 @@ const confirmEditCard = async ({ id, text }) => {
     } catch (error) {
         console.error('Error updating card:', error.message);
     }
-    
+
     isEditCardModalOpen.value = false;
     idToEdit.value = null;
     fetchCards();
@@ -195,6 +204,14 @@ const openEditListModal = () => {
 
 const deleteList = () => {
     emit('deleteList', props.id);
+};
+
+const pushListLeft = () => {
+    emit('pushListLeft', props.id);
+};
+
+const pushListRight = () => {
+    emit('pushListRight', props.id);
 };
 
 onMounted(async () => {
