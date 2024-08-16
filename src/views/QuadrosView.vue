@@ -6,8 +6,8 @@
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
                 <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :title="quadro.title"
-                    :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" @openDeleteModal="openDeleteModal"
-                    @openEditModal="openEditModal" />
+                    :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" :isFavourite="quadro.isFavourite" @openDeleteModal="openDeleteModal"
+                    @openEditModal="openEditModal" @favouriteBoard="favouriteBoard" />
             </div>
         </div>
 
@@ -89,7 +89,7 @@ const quadros = ref([]);
 
 const fetchCurrentUser = async () => {
     const { data } = await supabase.auth.getUser();
-    
+
     currentUser.value = data.user;
 
     console.log('Current user:', currentUser.value);
@@ -145,7 +145,7 @@ const confirmEdit = async ({ id, title, bg_color, text_color }) => {
     }
 
     cancelEdit();
-    
+
     fetchQuadros();
     return data;
 };
@@ -165,7 +165,7 @@ const submitForm = async () => {
 const addQuadro = async ({ form }) => {
     //get current user logged in
     const { data: userData } = await supabase.auth.getUser();
-    
+
     try {
         const { data, error } = await supabase
             .from('quadros')
@@ -202,6 +202,20 @@ const deleteBoard = async (id) => {
     closeDeleteModal();
 };
 
+const favouriteBoard = async (id, isFavourite) => {
+    try {
+        const { error } = await supabase
+            .from('quadros')
+            .update({ favourited_users: isFavourite ? supabase.auth.user().email : null })
+            .eq('id', id);
+        if (error) throw error;
+        console.log('Board favourited successfully');
+        fetchQuadros();
+    } catch (error) {
+        console.error('Error favouriting board:', error.message);
+    }
+};
+
 const fetchQuadros = async () => {
     const { data, error } = await supabase
         .from('quadros')
@@ -212,6 +226,11 @@ const fetchQuadros = async () => {
         console.error('Error fetching quadros:', error.message);
     } else {
         quadros.value = data;
+        quadros.value.forEach(quadro => {
+            if(quadro.favourited_users != null && quadro.favourited_users.includes(currentUser.value.email)) {
+                quadro.isFavourite = true;
+            }
+        });
     }
 };
 
@@ -220,4 +239,3 @@ onMounted(async () => {
     fetchQuadros();
 });
 </script>
-
