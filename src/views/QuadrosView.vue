@@ -86,6 +86,7 @@ const form = ref({
 });
 
 const quadros = ref([]);
+const quadrosCompartilhados = ref([]);
 
 const fetchCurrentUser = async () => {
     const { data } = await supabase.auth.getUser();
@@ -235,6 +236,26 @@ const fetchQuadros = async () => {
             }
         });
     }
+};
+
+const fetchQuadrosCompartilhados = async () => {
+    //todo nao esta pronto! é so o esqueleto o .eq nao ta certo
+    
+    // const { data, error } = await supabase
+    //     .from('quadros')
+    //     .select('*')
+    //     .eq('permitted_users', currentUser.value.email)
+    //     .order('id', { ascending: true });
+    // if (error) {
+    //     console.error('Error fetching quadros compartilhados:', error.message);
+    // } else {
+    //     quadrosCompartilhados.value = data;
+    //     quadrosCompartilhados.value.forEach(quadro => {
+    //         if (quadro.favourited_users != null && quadro.favourited_users.includes(currentUser.value.email)) {
+    //             quadro.isFavourite = true;
+    //         }
+    //     });
+    // }
 };
 
 onMounted(async () => {
