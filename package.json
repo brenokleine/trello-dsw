@@ -15,6 +15,7 @@
     "axios": "^1.7.2",
     "devextreme": "24.1.4",
     "devextreme-vue": "24.1.4",
+    "mitt": "^3.0.1",
     "trello-dsw": "file:",
     "vue": "^3.4.29",
     "vue-authenticate": "^1.5.0",

@@ -53,8 +53,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { supabase } from '@/clients/supabase.js';
 import { useRouter } from 'vue-router';
+import { eventBus } from '@/eventBus.js';
+import { supabase } from '@/clients/supabase.js';
 
 const email = ref('');
 const password = ref('');
@@ -86,6 +87,7 @@ async function login() {
         console.log(data);
     }
 
+    eventBus.emit('userLogged', data.user);
     router.push('/quadros');
 }
 

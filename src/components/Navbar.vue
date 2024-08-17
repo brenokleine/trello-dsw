@@ -15,7 +15,7 @@
                 </p>
             </RouterLink>
         </div>
-        <button @click="logout" class="bg-red-500 text-white font-semibold rounded-xl p-3 hover:bg-red-800 transition">
+        <button v-if="currentUser !== null" @click="logout" class="bg-red-500 text-white font-semibold rounded-xl p-3 hover:bg-red-800 transition">
             Logout
         </button>
     </nav>
@@ -26,6 +26,7 @@ import LogoComponent from '@/components/LogoComponent.vue';
 import { supabase } from '@/clients/supabase.js';
 import { useRouter } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
+import { eventBus } from '@/eventBus.js';
 
 const router = useRouter();
 
@@ -34,11 +35,31 @@ async function logout() {
 
     if (error) {
         console.log(error);
+        return;
     } else {
         console.log('Logged out');
     }
 
+    currentUser.value = null;
     router.push('/login');
 }
+
+const currentUser = ref(null);
+
+const fetchCurrentUser = async () => {
+    const { data } = await supabase.auth.getUser();
+
+    return data.user || null;
+};
+
+onMounted(async () => {
+    currentUser.value = await fetchCurrentUser();
+
+    eventBus.on('userLogged', async (user) => {
+        currentUser.value = await fetchCurrentUser();
+    });
+});
+
+
 
 </script>
