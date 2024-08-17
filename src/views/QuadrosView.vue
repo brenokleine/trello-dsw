@@ -203,20 +203,35 @@ const deleteBoard = async (id) => {
     closeDeleteModal();
 };
 
-const favouriteBoard = async (id, isFavourite) => {
-    
+const favouriteBoard = async ({ id, isFavourite }) => {
     const userEmail = currentUser.value.email;
-    
+
+    // Busca o quadro pelo ID e trata o caso de 'favourited_users' ser null
+    const quadro = quadros.value.find(q => q.id === id);
+    let favouritedUsers = quadro.favourited_users || [];
+
+    // Adiciona ou remove o userEmail de 'favourited_users' baseado em 'isFavourite'
+    if (isFavourite) {
+        // Adiciona se ainda não estiver na lista
+        if (!favouritedUsers.includes(userEmail)) {
+            favouritedUsers.push(userEmail);
+        }
+    } else {
+        // Remove se estiver na lista
+        favouritedUsers = favouritedUsers.filter(email => email !== userEmail);
+    }
+
     try {
+        // Atualiza 'favourited_users' no banco de dados
         const { error } = await supabase
             .from('quadros')
-            .update({ favourited_users: isFavourite ? userEmail : null })
+            .update({ favourited_users: favouritedUsers })
             .eq('id', id);
         if (error) throw error;
-        console.log('Board favourited successfully');
+        console.log('Board updated successfully');
         fetchQuadros();
     } catch (error) {
-        console.error('Error favouriting board:', error.message);
+        console.error('Error updating board:', error.message);
     }
 };
 

@@ -37,16 +37,8 @@
                             Create Account
                         </button>
                     </div>
-
-                    <div class="w-full flex font-semibold justify-center">
-                        <button @click.prevent="seeCurrentUser" class="bg-primary text-customWhite rounded-full p-2 
-                            hover:cursor-pointer hover:bg-tertiary transition ease-in duration-100 w-full">
-                            See current user
-                        </button>
-                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
