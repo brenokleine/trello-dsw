@@ -203,10 +203,13 @@ const deleteBoard = async (id) => {
 };
 
 const favouriteBoard = async (id, isFavourite) => {
+    
+    const userEmail = currentUser.value.email;
+    
     try {
         const { error } = await supabase
             .from('quadros')
-            .update({ favourited_users: isFavourite ? supabase.auth.user().email : null })
+            .update({ favourited_users: isFavourite ? userEmail : null })
             .eq('id', id);
         if (error) throw error;
         console.log('Board favourited successfully');
@@ -236,6 +239,6 @@ const fetchQuadros = async () => {
 
 onMounted(async () => {
     await fetchCurrentUser();
-    fetchQuadros();
+    await fetchQuadros();
 });
 </script>
