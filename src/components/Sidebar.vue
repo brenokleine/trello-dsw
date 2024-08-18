@@ -25,7 +25,7 @@
                                 Edit:
                             </p>
                             <div v-for="contributor in contributors" :key="contributor.email">
-                                <p v-if="contributor.permission == 'edit'" class="italic font-normal text-white">
+                                <p v-if="contributor.permission == 'edit'" class="italic font-normal truncate text-white">
                                     {{ contributor.email }}
                                 </p>
                             </div>
@@ -35,7 +35,7 @@
                                 Read:
                             </p>
                             <div v-for="contributor in contributors" :key="contributor.email">
-                                <p v-if="contributor.permission == 'read'" class="italic font-normal text-white">
+                                <p v-if="contributor.permission == 'read'" class="italic font-normal truncate text-white">
                                     {{ contributor.email }}
                                 </p>
                             </div>

@@ -254,27 +254,24 @@ const fetchQuadros = async () => {
 };
 
 const fetchQuadrosCompartilhados = async () => {
-    //todo nao esta pronto! é so o esqueleto o .eq nao ta certo
-    
-    // const { data, error } = await supabase
-    //     .from('quadros')
-    //     .select('*')
-    //     .eq('permitted_users', currentUser.value.email)
-    //     .order('id', { ascending: true });
-    // if (error) {
-    //     console.error('Error fetching quadros compartilhados:', error.message);
-    // } else {
-    //     quadrosCompartilhados.value = data;
-    //     quadrosCompartilhados.value.forEach(quadro => {
-    //         if (quadro.favourited_users != null && quadro.favourited_users.includes(currentUser.value.email)) {
-    //             quadro.isFavourite = true;
-    //         }
-    //     });
-    // }
+    const { data, error } = await supabase
+        .from('quadros')
+        //seleciona todos os quadros que o email do usuario logado está na lista de compartilhamento
+        .select('*')
+        .contains('permitted_users', JSON.stringify([{ email: currentUser.value.email }]))
+        .order('id', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching permitted quadros:', error.message);
+        return;
+    }
+    console.log('Permitted quadros:', data);
+    // quadrosCompartilhados.value = data;
 };
 
 onMounted(async () => {
     await fetchCurrentUser();
     await fetchQuadros();
+    await fetchQuadrosCompartilhados();
 });
 </script>
