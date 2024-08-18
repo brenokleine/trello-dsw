@@ -49,7 +49,6 @@ export default {
                 }
 
                 alert('Password updated successfully!');
-                // logout the user and redirect to login page
                 await supabase.auth.signOut();
                 this.$router.push('/login');
             } catch (error) {
