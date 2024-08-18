@@ -7,22 +7,23 @@
                 </div>
                 <span class="text-primary text-xl font-semibold">Trello DSW</span>
             </RouterLink>
-            <RouterLink to="/quadros"
-                class="flex items-center bg-tertiary hover:bg-customWhite hover:text-primary transition ease-in text-white font-semibold p-3 rounded-xl"
-            >
-                <p>
-                    Boards
-                </p>
+            <RouterLink to="/quadros" class="flex items-center bg-tertiary hover:bg-customWhite hover:text-primary transition ease-in text-white font-semibold p-3 rounded-xl">
+                <p> Boards </p>
             </RouterLink>
         </div>
-        <button v-if="currentUser !== null" @click="logout" class="bg-red-500 text-white font-semibold rounded-xl p-3 hover:bg-red-800 transition">
-            Logout
-        </button>
+        <div class="flex items-center space-x-4">
+            <button v-if="currentUser !== null" @click="changePassword" class="flex items-center bg-tertiary hover:bg-customWhite hover:text-primary transition ease-in text-white font-semibold p-3 rounded-xl">
+                Change Password
+            </button>
+            <button v-if="currentUser !== null" @click="logout" class="bg-red-500 text-white font-semibold rounded-xl p-3 hover:bg-red-800 transition">
+                Logout
+            </button>
+        </div>
     </nav>
 </template>
 
 <script setup>
-import LogoComponent from '@/components/LogoComponent.vue';
+import LogoComponent from '@/components/logoComponent.vue';
 import { supabase } from '@/clients/supabase.js';
 import { useRouter } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
@@ -42,6 +43,10 @@ async function logout() {
 
     currentUser.value = null;
     router.push('/login');
+}
+
+async function changePassword() {
+    router.push('/update-password');
 }
 
 const currentUser = ref(null);

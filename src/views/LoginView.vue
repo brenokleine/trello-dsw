@@ -39,15 +39,17 @@
                     </div>
 
                     <div class="w-full flex font-semibold justify-center">
-                        <button @click.prevent="seeCurrentUser" class="bg-primary text-customWhite rounded-full p-2 
+                        <button @click.prevent="openForgotPasswordModal" class="bg-primary text-customWhite rounded-full p-2 
                             hover:cursor-pointer hover:bg-tertiary transition ease-in duration-100 w-full">
-                            See current user
+                            Forgot my password
                         </button>
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- Modal -->
+        <ForgotPasswordModal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
     </div>
 </template>
 
@@ -56,9 +58,11 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { eventBus } from '@/eventBus.js';
 import { supabase } from '@/clients/supabase.js';
+import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue';
 
 const email = ref('');
 const password = ref('');
+const showForgotPasswordModal = ref(false);
 
 const router = useRouter();
 
@@ -91,12 +95,12 @@ async function login() {
     router.push('/quadros');
 }
 
-async function seeCurrentUser() {
-    const localUser = await supabase.auth.getSession();
-    console.log(localUser); 
+function openForgotPasswordModal() {
+    showForgotPasswordModal.value = true;
 }
 
-
+function closeForgotPasswordModal() {
+    showForgotPasswordModal.value = false;
+}
 
 </script>
-

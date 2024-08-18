@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import QuadrosView from '@/views/QuadrosView.vue'
 import { supabase } from '@/clients/supabase'
 import QuadroDetailView from '@/views/QuadroDetailView.vue'
+import UpdatePasswordView from '@/views/UpdatePasswordView.vue'
 
 let localUser;
 
@@ -35,8 +36,15 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/update-password',
+      name: 'update-password',
+      component: UpdatePasswordView,
+      meta: {
+        requiresAuth: true
+      }
     }
-
   ]
 })
 
