@@ -162,10 +162,8 @@ const confirmEdit = async ({ id, title, bg_color, text_color }) => {
     } catch (error) {
         console.error('Error updating quadro:', error.message);
     }
-
     cancelEdit();
 
-    fetchQuadros();
     return data;
 };
 
@@ -257,12 +255,20 @@ const fetchQuadros = async () => {
     const { data, error } = await supabase
         .from('quadros')
         .select('*')
-        .eq('creator_id', currentUser.value.id)
         .order('id', { ascending: true });
     if (error) {
         console.error('Error fetching quadros:', error.message);
     } else {
-        quadros.value = data;
+        const filteredData = data.filter(quadro =>
+            quadro.creator_id === currentUser.value.id ||
+            (quadro.permitted_users &&
+             quadro.permitted_users.some(user => user.email === currentUser.value.email))
+        );
+
+        console.log("DADOS")
+        console.log(filteredData)
+
+        quadros.value = filteredData;
         quadros.value.forEach(quadro => {
             if(quadro.favourited_users != null && quadro.favourited_users.includes(currentUser.value.email)) {
                 quadro.isFavourite = true;
@@ -271,25 +277,8 @@ const fetchQuadros = async () => {
     }
 };
 
-const fetchQuadrosCompartilhados = async () => {
-    const { data, error } = await supabase
-        .from('quadros')
-        //seleciona todos os quadros que o email do usuario logado está na lista de compartilhamento
-        .select('*')
-        .contains('permitted_users', JSON.stringify([{ email: currentUser.value.email }]))
-        .order('id', { ascending: true });
-
-    if (error) {
-        console.error('Error fetching permitted quadros:', error.message);
-        return;
-    }
-    console.log('Permitted quadros:', data);
-    // quadrosCompartilhados.value = data;
-};
-
 onMounted(async () => {
     await fetchCurrentUser();
     await fetchQuadros();
-    await fetchQuadrosCompartilhados();
 });
 </script>
