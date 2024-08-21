@@ -12,15 +12,15 @@
                 <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400
                     focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" ref="fileInput" @change="handleFileSelection">
             </div>
-            <div class="flex justify-around">
-                <button type="button" @click="closePdfModal"
-                    class="mr-4 bg-red-600 hover:bg-red-700 text-white transition ease-in duration-75 py-2 px-4 rounded-lg">
-                    Close
-                </button>
+            <div class="flex justify-end gap-2">
                 <button type="button"
                     class="bg-green-500 hover:bg-green-600 transition ease-in duration-75 text-white py-2 px-4 rounded-lg disabled:opacity-50"
                     @click.prevent="uploadPdf">
                     Add
+                </button>
+                <button type="button" @click="closePdfModal"
+                    class="bg-red-600 hover:bg-red-700 text-white transition ease-in duration-75 py-2 px-4 rounded-lg">
+                    Close
                 </button>
             </div>
         </div>
