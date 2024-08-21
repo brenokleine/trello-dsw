@@ -22,7 +22,7 @@
                 Lists: {{ lists }}
             </div>
         </router-link>
-        <div class="flex flex-nowrap">
+        <div class="flex flex-nowrap" v-if="permission == 'edit' || permission == 'owner'">
             <button @click.prevent="openDeleteModal"
                 class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-bl-lg">
                 Delete
@@ -69,6 +69,10 @@ const props = defineProps({
     pdfPath: {
         type: String,
         default: ''
+    },
+    permission: {
+        type: String || undefined,
+        default: 'owner'
     }
 });
 

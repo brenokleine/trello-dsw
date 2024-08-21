@@ -5,7 +5,7 @@
         <!-- quadros content -->
         <div class="bg-secondary w-full ">
             <div class="flex flex-wrap">
-                <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :title="quadro.title"
+                <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :permission="quadro.permission" :title="quadro.title"
                     :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" :isFavourite="quadro.isFavourite" @openDeleteModal="openDeleteModal"
                     @openEditModal="openEditModal" @favouriteBoard="favouriteBoard" @openPdfModal="openPdfModal" />
             </div>
@@ -259,11 +259,23 @@ const fetchQuadros = async () => {
     if (error) {
         console.error('Error fetching quadros:', error.message);
     } else {
-        const filteredData = data.filter(quadro =>
-            quadro.creator_id === currentUser.value.id ||
-            (quadro.permitted_users &&
-             quadro.permitted_users.some(user => user.email === currentUser.value.email))
-        );
+        const filteredData = data.map(quadro => {
+            // Verifica se o quadro foi criado pelo usuário atual
+            if (quadro.creator_id === currentUser.value.id) {
+                return quadro;
+            }
+
+            // Verifica se o quadro está compartilhado com o usuário atual
+            const permittedUser = quadro.permitted_users &&
+                quadro.permitted_users.find(user => user.email === currentUser.value.email);
+
+            if (permittedUser) {
+                // Adiciona o campo "permission" com o valor correspondente
+                return { ...quadro, permission: permittedUser.permission };
+            }
+
+            return null; // Filtra quadros que não estão relacionados ao usuário
+        }).filter(quadro => quadro !== null); // Remove quadros que não passaram nos filtros
 
         console.log("DADOS")
         console.log(filteredData)
