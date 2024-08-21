@@ -2,7 +2,7 @@
     <div class="h-full w-72 bg-quaternary rounded-lg">
         <div class="w-full h-fit">
             <div class="flex flex-col">
-                <div class="flex flex-nowrap font-semibold">
+                <div v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" class="flex flex-nowrap font-semibold">
                     <button @click.prevent="openEditListModal"
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-tl-md transition ease-in duration-75">
                         Edit
@@ -12,7 +12,7 @@
                         Delete
                     </button>
                 </div>
-                <div class="flex flex-nowrap font-semibold">
+                <div v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" class="flex flex-nowrap font-semibold">
                     <svg @click.prevent="pushListLeft" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 justify-start w-full hover:bg-gray-500 cursor-pointer">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                     </svg>
@@ -30,7 +30,7 @@
                     Cards: {{ cards.length }}
                 </p>
 
-                <button class="bg-green-500 hover:bg-green-700 text-sm font-semibold text-white rounded-full p-2"
+                <button v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" class="bg-green-500 hover:bg-green-700 text-sm font-semibold text-white rounded-full p-2"
                     @click="openCardModal">
                     Add
                 </button>
@@ -39,7 +39,7 @@
 
         <!-- render cards here -->
         <div class="w-full h-fit p-2 flex flex-col gap-3">
-            <Card v-for="card in cards" :key="card.id" :text="card.text" :id="card.id" :ultima_alteracao="card.ultima_alteracao" :created_at="card.created_at"
+            <Card v-for="card in cards" :key="card.id" :currentUserPermission="currentUserPermission" :text="card.text" :id="card.id" :ultima_alteracao="card.ultima_alteracao" :created_at="card.created_at"
                 @openEditCardModal="openEditCardModal" @deleteCard="deleteCard" @pushCardLeft="pushCardLeft" @pushCardRight="pushCardRight" />
         </div>
 
@@ -86,6 +86,10 @@ const props = defineProps({
         required: true
     },
     id: {
+        type: String,
+        required: true
+    },
+    currentUserPermission: {
         type: String,
         required: true
     }

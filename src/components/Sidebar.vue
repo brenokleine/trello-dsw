@@ -6,13 +6,13 @@
             </div>
             <div class="flex flex-col flex-grow p-4">
                 <div class="mb-4">
-                    <button @click.prevent="openModal"
+                    <button v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" @click.prevent="openModal"
                         class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
                         Add New {{ mode }}
                     </button>
                 </div>
                 <div v-if="mode == 'List'" class="mb-4">
-                    <button @click.prevent="openContributorModal"
+                    <button v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" @click.prevent="openContributorModal"
                         class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg">
                         Add Contributor
                     </button>
@@ -68,6 +68,11 @@ const props = defineProps({
     contributors: {
         type: Array,
         required: false,
+    },
+    currentUserPermission: {
+        type: String,
+        required: false,
+        default: 'owner',
     },
 });
 

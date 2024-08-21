@@ -1,6 +1,6 @@
 <template>
     <div class="w-full h-fit text-white bg-tertiary rounded-md flex flex-col ">
-        <div class="border-b border-secondary p-2">
+        <div v-if="currentUserPermission === 'owner' || currentUserPermission === 'edit'" class="border-b border-secondary p-2">
             <div class="flex flex-nowrap gap-2 font-semibold">
                 <button @click.prevent="openEditCardModal"
                     class="w-full bg-secondary hover:bg-primary text-white p-1 rounded-md transition ease-in duration-75">
@@ -63,6 +63,10 @@ const props = defineProps({
         required: false
     },
     created_at: {
+        type: String,
+        required: true
+    },
+    currentUserPermission: {
         type: String,
         required: true
     }

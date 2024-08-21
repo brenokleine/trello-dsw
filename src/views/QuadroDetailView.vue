@@ -1,6 +1,7 @@
 <template>
     <div class="flex flex-nowrap bg-secondary w-full overflow-auto">
-        <Sidebar :openModal="openModal" @openContributorModal="openContributorModal" :contributors="contributorsArray" :mode="'List'" />
+        <Sidebar :openModal="openModal" @openContributorModal="openContributorModal"
+            :currentUserPermission="currentUserPermission" :contributors="contributorsArray" :mode="'List'" />
 
         <!-- content -->
         <div class="flex flex-col w-full">
@@ -9,8 +10,9 @@
             </div>
             <div class="w-full h-full flex gap-4 p-3">
                 <Lista v-for="lista in quadroLists" :key="lista.id" :title="lista.title" :id="lista.id"
-                    @openEditListModal="openEditListModal" @deleteList="deleteList" @pushListLeft="pushListLeft" @pushListRight="pushListRight"
-                    @pushCardLeft="pushCardLeft" @pushCardRight="pushCardRight"/>
+                    :currentUserPermission="currentUserPermission" @openEditListModal="openEditListModal"
+                    @deleteList="deleteList" @pushListLeft="pushListLeft" @pushListRight="pushListRight"
+                    @pushCardLeft="pushCardLeft" @pushCardRight="pushCardRight" />
             </div>
         </div>
 
@@ -79,6 +81,10 @@ const form = ref({
 });
 
 const contributorsArray = ref([]);
+
+const currentUserPermission = ref('');
+
+const currentUserEmail = ref('');
 
 const fetchDetails = async () => {
     const { data, error } = await supabase
@@ -299,7 +305,7 @@ const confirmContributorAdd = async ( {email, permission} ) => {
         permission: permission
     }
 
-    const currentUserEmail = (await supabase.auth.getUser()).data.user.email;
+    
 
     if(currentUserEmail === contributor.email){
         window.alert('You cannot add yourself as a contributor');
@@ -335,6 +341,18 @@ const confirmContributorAdd = async ( {email, permission} ) => {
 onMounted(async () => {
     await fetchDetails();
     await fetchLists();
+    
+    currentUserEmail.value = (await supabase.auth.getUser()).data.user.email;
+
+    if(quadroDetails.value.creator_id === (await supabase.auth.getUser()).data.user.id){
+        currentUserPermission.value = 'owner';
+    } else {
+        quadroDetails.value.permitted_users.forEach(user => {
+            if(user.email === currentUserEmail.value){
+                currentUserPermission.value = user.permission;
+            }
+        });
+    }
 });
 
 </script>
