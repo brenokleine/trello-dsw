@@ -7,7 +7,7 @@
             <div class="flex flex-wrap">
                 <Quadro v-for="quadro in quadros" :key="quadro.id" :id="quadro.id" :title="quadro.title"
                     :backgroundColor="quadro.bg_color" :textColor="quadro.text_color" :isFavourite="quadro.isFavourite" @openDeleteModal="openDeleteModal"
-                    @openEditModal="openEditModal" @favouriteBoard="favouriteBoard" />
+                    @openEditModal="openEditModal" @favouriteBoard="favouriteBoard" @openPdfModal="openPdfModal" />
             </div>
         </div>
 
@@ -50,6 +50,9 @@
         <EditQuadroModal v-if="isEditModalOpen" :id="idToEdit" :title="titleToEdit" :bg_color="bgColorToEdit"
             :text_color="textColorToEdit" @cancelEdit="cancelEdit" @confirmEdit="confirmEdit" />
 
+        <PdfModal v-if="isPdfModalOpen" :nomeQuadro="boardNameForPdf" @closePdfModal="closePdfModal"
+            @addPdf="addPdf"/>
+
     </div>
 </template>
 
@@ -62,6 +65,7 @@ import Quadro from '@/components/Quadro.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DeleteQuadroModal from '@/components/DeleteQuadroModal.vue';
 import EditQuadroModal from '@/components/EditQuadroModal.vue';
+import PdfModal from '@/components/PdfModal.vue';
 import 'devextreme/dist/css/dx.light.css';
 import DxColorBox from 'devextreme-vue/color-box';
 
@@ -69,6 +73,9 @@ const isModalOpen = ref(false);
 
 const isDeleteModalOpen = ref(false);
 const idToDelete = ref(null);
+
+const isPdfModalOpen = ref(false);
+const boardNameForPdf = ref('');
 
 const isEditModalOpen = ref(false);
 const idToEdit = ref(null);
@@ -104,6 +111,17 @@ const openDeleteModal = (id) => {
 const closeDeleteModal = () => {
     isDeleteModalOpen.value = false;
     idToDelete.value = null;
+};
+
+const openPdfModal = (boardName) => {
+    boardNameForPdf.value = boardName;
+    isPdfModalOpen.value = true;
+};
+
+
+const closePdfModal = () => {
+    isPdfModalOpen.value = false;
+    boardNameForPdf.value = '';
 };
 
 const openModal = () => {
