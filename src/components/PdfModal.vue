@@ -50,7 +50,7 @@ const closePdfModal = () => {
 
 const listPdfsFromBoardName = async () => {
     const boardName = props.nomeQuadro;
-    const {data, error} = await supabase.storage.from(boardName).list();
+    const {data} = await supabase.storage.from(boardName).list();
 
     if(data.length === 0) {
         await createNewBucket(boardName);
@@ -68,22 +68,16 @@ const uploadPdf = async () => {
     }
 
     const boardName = props.nomeQuadro;
-    console.log(selectedFile.value.name)
-    const {error} = await supabase.storage.from(boardName).upload(selectedFile.value.name, selectedFile.value, {upsert: true});
-    if(error) {
-        console.log(error);
-    }
+    await supabase.storage.from(boardName).upload(selectedFile.value.name, selectedFile.value, {upsert: true});
 
     closePdfModal();
 }
 
 const retrievePdf = async (index) => {
     const boardName = props.nomeQuadro;
-    console.log("INDEX: " + index)
-    console.log("PDF: " + pdfArray.value[index].name)
 
     // baixar o PDF
-    const { data, error } = await supabase
+    const { data } = await supabase
         .storage
         .from(boardName)
         .download(pdfArray.value[index].name);
@@ -104,7 +98,6 @@ const retrievePdf = async (index) => {
 }
 
 const createNewBucket = async (boardName) => {
-    console.log("teste: " + boardName)
     await supabase
         .storage
         .createBucket(boardName, {

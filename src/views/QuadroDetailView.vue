@@ -51,14 +51,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { supabase } from '@/clients/supabase.js';
 import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 import EditListModal from '@/components/EditListModal.vue';
 import AddContributorModal from '@/components/AddContributorModal.vue';
-import { getCurrentInstance } from 'vue';
 
 const route = useRoute();
 const id = ref(route.params.id);
@@ -90,8 +89,6 @@ const fetchDetails = async () => {
 
     if (error) {
         console.error('Error fetching quadro details:', error.message);
-    } else {
-        console.log('Quadro details:', data[0]);
     }
 
     contributorsArray.value = data[0].permitted_users || [];
@@ -107,8 +104,6 @@ const fetchLists = async () => {
 
     if (error) {
         console.error('Error fetching lists:', error.message);
-    } else {
-        console.log('Lists:', data);
     }
 
     quadroLists.value = data;
@@ -129,8 +124,6 @@ const closeModal = () => {
 };
 
 const submitForm = async () => {
-    console.log('Submitting form:', form.value);
-
     const { data, error } = await supabase
         .from('listas')
         .insert([
@@ -142,8 +135,6 @@ const submitForm = async () => {
 
     if (error) {
         console.error('Error inserting new list:', error.message);
-    } else {
-        console.log('New list inserted:', data);
     }
 
     form.value.title = '';
@@ -171,7 +162,6 @@ const confirmEditList = async ({ id, title }) => {
             .update({ title })
             .eq('id', id);
         if (error) throw error;
-        console.log('List updated successfully');
         fetchLists();
     } catch (error) {
         console.error('Error updating list:', error.message);
@@ -188,7 +178,6 @@ const deleteList = async (id) => {
             .delete()
             .eq('id', id);
         if (error) throw error;
-        console.log('List deleted successfully');
         fetchLists();
     } catch (error) {
         console.error('Error deleting list:', error.message);
@@ -246,7 +235,6 @@ const updateListOrder = async (list1, list2) => {
                 { created_at: list2.created_at },
             ]);
         if (error) throw error;
-        console.log('List order updated successfully');
     } catch (error) {
         console.error('Error updating list order:', error.message);
     }
@@ -288,8 +276,9 @@ const updateCardList = async (card) => {
             .from('cartoes')
             .update({ lista_id: card.lista_id })
             .eq('id', card.id);
+
+        location.reload();
         if (error) throw error;
-        console.log('Card list updated successfully');
     } catch (error) {
         console.error('Error updating card list:', error.message);
     }
